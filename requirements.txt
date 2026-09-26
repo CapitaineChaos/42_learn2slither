@@ -1,0 +1,2 @@
+pygame-ce>=2.5,<3
+cairosvg>=2.7,<3

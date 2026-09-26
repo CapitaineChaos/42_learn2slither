@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <title>mur horizontal</title>
+  <desc>Sprite vectoriel 16 × 16. Couleurs originales conservées ; zones turquoise transparentes.</desc>
+  <path id="rouge_sombre" fill="#770000" d="M0 0h16v1H0z M0 1h16v1H0z M0 10h16v1H0z M0 11h16v1H0z"/>
+  <path id="rouge" fill="#ff0000" d="M0 2h16v1H0z M0 3h16v1H0z M0 6h16v1H0z M0 7h16v1H0z M0 8h16v1H0z M0 9h16v1H0z"/>
+  <path id="rouge_moyen" fill="#dd0000" d="M0 4h16v1H0z M0 5h16v1H0z"/>
+  <path id="bleu" fill="#0077cc" d="M0 12h16v1H0z M0 13h16v1H0z"/>
+  <path id="bleu_sombre" fill="#003377" d="M0 14h16v1H0z M0 15h16v1H0z"/>
+</svg>

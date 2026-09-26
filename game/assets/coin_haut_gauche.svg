@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <title>coin haut gauche</title>
+  <desc>Sprite vectoriel 16 × 16. Couleurs originales conservées ; zones turquoise transparentes.</desc>
+  <path id="rouge_sombre" fill="#770000" d="M1 0h15v1H1z M0 1h16v1H0z M0 2h3v1H0z M0 3h2v1H0z M0 4h2v1H0z M0 5h2v1H0z M0 6h2v1H0z M0 7h2v1H0z M0 8h2v1H0z M0 9h2v1H0z M0 10h2v1H0z M12 10h4v1H12z M0 11h2v1H0z M11 11h5v1H11z M0 12h2v1H0z M11 12h3v1H11z M0 13h2v1H0z M11 13h2v1H11z M0 14h2v1H0z M11 14h2v1H11z M0 15h2v1H0z M11 15h2v1H11z"/>
+  <path id="rouge" fill="#ff0000" d="M3 2h13v1H3z M2 3h14v1H2z M2 4h2v1H2z M2 5h1v1H2z M2 6h1v1H2z M6 6h10v1H6z M2 7h1v1H2z M5 7h11v1H5z M2 8h1v1H2z M5 8h11v1H5z M2 9h1v1H2z M5 9h11v1H5z M2 10h1v1H2z M5 10h7v1H5z M2 11h1v1H2z M5 11h6v1H5z M2 12h1v1H2z M5 12h6v1H5z M2 13h1v1H2z M5 13h6v1H5z M2 14h1v1H2z M5 14h6v1H5z M2 15h1v1H2z M5 15h6v1H5z"/>
+  <path id="rouge_moyen" fill="#dd0000" d="M4 4h12v1H4z M3 5h13v1H3z M3 6h3v1H3z M3 7h2v1H3z M3 8h2v1H3z M3 9h2v1H3z M3 10h2v1H3z M3 11h2v1H3z M3 12h2v1H3z M3 13h2v1H3z M3 14h2v1H3z M3 15h2v1H3z"/>
+  <path id="bleu" fill="#0077cc" d="M14 12h2v1H14z M13 13h3v1H13z M13 14h2v1H13z M13 15h1v1H13z"/>
+  <path id="bleu_sombre" fill="#003377" d="M15 14h1v1H15z M14 15h2v1H14z"/>
+</svg>
