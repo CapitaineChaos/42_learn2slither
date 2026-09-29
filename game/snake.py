@@ -1,5 +1,8 @@
+import random
 from dataclasses import dataclass
 from enum import Enum
+
+from . import config
 
 
 class Direction(Enum):
@@ -24,48 +27,48 @@ class Point:
         return Point(self.x + dx, self.y + dy)
 
 
+def random_coordinate(rng: random.Random, size: int, delta: int) -> int:
+    span = config.SNAKE_LENGTH - 1
+    low = span if delta > 0 else 0
+    high = size - span if delta < 0 else size
+    return rng.randrange(low, high)
+
+
 class Snake:
     def __init__(self, body, direction: Direction):
         self.body = list(body)
         self.previous_body = list(body)
         self.direction = direction
-        self.pending = direction
         self.tail = self.body[-1]
+
+    @classmethod
+    def random(cls, width: int, height: int, rng: random.Random) -> "Snake":
+        direction = rng.choice(tuple(Direction))
+        dx, dy = direction.value
+        head = Point(
+            random_coordinate(rng, width, dx),
+            random_coordinate(rng, height, dy),
+        )
+        body = [head]
+        while len(body) < config.SNAKE_LENGTH:
+            body.append(body[-1].shifted(direction.opposite))
+        return cls(body, direction)
 
     @property
     def head(self) -> Point:
         return self.body[0]
 
-    def turn(self, direction: Direction) -> None:
-        if direction is self.direction.opposite:
-            return
-        self.pending = direction
-
-    def step(self, board_size: int):
+    def advance(self, direction: Direction) -> None:
         self.previous_body = list(self.body)
-        for direction in (self.pending, self.direction):
-            target = self.head.shifted(direction)
-            if not self.walkable(target, board_size):
-                continue
-            self.direction = direction
-            self.pending = direction
-            self.body.insert(0, target)
-            self.tail = self.body.pop()
-            return target
-        self.pending = self.direction
-        return None
-
-    def walkable(self, cell: Point, board_size: int) -> bool:
-        if not (0 <= cell.x < board_size and 0 <= cell.y < board_size):
-            return False
-        return cell not in self.body[:-1]
+        self.direction = direction
+        self.body.insert(0, self.head.shifted(direction))
+        self.tail = self.body.pop()
 
     def grow(self) -> None:
         self.body.append(self.tail)
 
     def shrink(self) -> None:
-        if len(self.body) > 1:
-            self.body.pop()
+        self.body.pop()
 
     def segments(self, alpha: float):
         last = len(self.previous_body) - 1
