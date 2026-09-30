@@ -1,0 +1,180 @@
+/* Écran de démarrage : logo, jauge du calcul, configuration et Démarrer. La
+   page reste masquée derrière, mais occupe déjà sa place, de sorte que les vues
+   peuvent mesurer leurs blocs avant d'apparaître.
+
+   Rien n'y change de taille pendant le calcul : carte de largeur fixe, libellé
+   d'étape sur une ligne, tronqué, pourcentage en chasse fixe. */
+
+.booting .app { visibility: hidden; opacity: 0; }
+.app { transition: opacity 0.45s ease-out; }
+
+.start {
+  --card: min(30rem, calc(100vw - 2rem));
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  overflow: auto;
+  background:
+    radial-gradient(50rem 30rem at 15% 10%, color-mix(in srgb, var(--candy-pink) 14%, transparent), transparent 70%),
+    radial-gradient(50rem 30rem at 85% 90%, color-mix(in srgb, var(--candy-sky) 14%, transparent), transparent 70%),
+    var(--ground);
+  transition: opacity 0.45s ease-out;
+}
+.start::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--line);
+  -webkit-mask: var(--honeycomb) 0 0 / 28px 49px;
+  mask: var(--honeycomb) 0 0 / 28px 49px;
+  opacity: 0.5;
+}
+.start.is-done { opacity: 0; pointer-events: none; }
+
+/* Colonne bornée à la carte. Sans minmax(0, …), le libellé d'étape, sur une
+   ligne, élargirait la colonne à chaque changement de texte. */
+.start-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  width: var(--card);
+  padding: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  corner-shape: bevel;
+  box-shadow: var(--shadow-lift);
+}
+
+/* --------------------------------------------------------------- marque */
+
+.start-logo { position: relative; display: grid; place-items: center; justify-self: center; width: 5.5rem; height: 5.5rem; }
+.start-logo .logo { width: 3.9rem; height: 3.9rem; }
+.start-ring {
+  position: absolute;
+  inset: 0;
+  fill: none;
+  stroke: url(#logo-line);
+  stroke-width: 2.5;
+  stroke-dasharray: 14 9;
+  animation: spin 5s linear infinite;
+}
+.start.is-ready .start-ring { stroke-dasharray: none; animation: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------------------------------------------------------------- jauge */
+
+/* Crans obliques : le même motif découpe le rail et le remplissage. Le
+   dégradé du remplissage a la largeur du rail, pour ne pas se tasser au
+   début. */
+.gauge { --gauge: calc(var(--card) - 3.5rem - 2px); display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+.gauge-track {
+  position: relative;
+  width: var(--gauge);
+  height: 0.9rem;
+  --notches: repeating-linear-gradient(110deg, #000 0 9px, transparent 9px 12px);
+}
+.gauge-track::before, .gauge-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  -webkit-mask: var(--notches);
+  mask: var(--notches);
+}
+.gauge-track::before { content: ''; width: 100%; background: var(--line); }
+.gauge-fill {
+  width: 0;
+  overflow: hidden;
+  background: var(--candy) 0 0 / var(--gauge) 100% no-repeat;
+  transition: width 0.25s ease-out;
+}
+.gauge-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 5rem;
+  background: linear-gradient(90deg, transparent, var(--surface), transparent);
+  opacity: 0.55;
+  animation: sweep 1.2s linear infinite;
+}
+.start.is-ready .gauge-fill::after { animation: none; opacity: 0; }
+@keyframes sweep {
+  from { transform: translateX(-5rem); }
+  to { transform: translateX(30rem); }
+}
+
+.gauge-line {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  color: var(--ink-faint);
+}
+.gauge-stage { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.start.is-failed .gauge-stage { color: var(--alert); font-weight: 600; white-space: normal; }
+.gauge-percent { flex: none; width: 5ch; text-align: right; font-weight: 600; color: var(--ink); }
+
+/* -------------------------------------------------------- configuration */
+
+.config { display: grid; gap: 0.9rem; }
+.config-title {
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.options { display: grid; gap: 0.5rem; }
+
+.choice { display: grid; gap: 0.5rem; margin: 0; padding: 0; border: 0; min-width: 0; }
+.choice-label { padding: 0; margin-bottom: 0.1rem; font-family: var(--display); font-size: var(--t-sm); font-weight: 600; color: var(--ink-soft); }
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  corner-shape: bevel;
+  cursor: pointer;
+}
+.option:hover { border-color: var(--edge); }
+.option:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+.option-label { font-family: var(--display); font-weight: 600; }
+
+/* Choix exclusif : hexagone creux, plein une fois coché. */
+.option input[type='radio'] {
+  flex: none;
+  width: 1.3rem;
+  height: 1.15rem;
+  margin: 0;
+  appearance: none;
+  background: var(--edge);
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  cursor: pointer;
+}
+.option input[type='radio']::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--surface);
+  clip-path: polygon(25% 12%, 75% 12%, 92% 50%, 75% 88%, 25% 88%, 8% 50%);
+}
+.option input[type='radio']:checked { background: var(--fill-hot); }
+.option input[type='radio']:checked::before { transform: scale(0.45); background: var(--on-accent); }
+.option input[type='radio']:focus-visible { outline: none; }
+.option:has(input:checked) { border-color: var(--accent); }
+
+.start-go { width: 100%; min-height: 2.9rem; font-size: var(--t-md); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge-fill { transition: none; }
+}

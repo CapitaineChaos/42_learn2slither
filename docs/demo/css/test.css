@@ -1,0 +1,80 @@
+.test[hidden], .test-log[hidden] { display: none; }
+
+.test { padding: 0.9rem; }
+
+.test-card {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  corner-shape: bevel;
+  box-shadow: var(--shadow);
+}
+
+.test-setting {
+  display: grid;
+  grid-template-columns: 6.5rem auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+}
+.test-label {
+  font-family: var(--display);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.test-value {
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: pre;
+  color: var(--ink);
+}
+
+.test-board { aspect-ratio: 1; max-height: 52vh; }
+.test-board canvas { display: block; width: 100%; height: 100%; }
+
+.test-controls { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.test-controls .button { min-height: 2.4rem; }
+#test-play { width: 5.5rem; }
+#test-step { width: 2.9rem; padding-inline: 0; font-family: var(--mono); }
+#test-new { margin-left: auto; }
+
+.test-readout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.test-log {
+  width: 100%;
+  margin-top: 0.75rem;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+}
+.test-log caption {
+  padding-bottom: 0.3rem;
+  text-align: left;
+  font-family: var(--display);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.test-log th, .test-log td { padding: 0.25rem 0.5rem; text-align: right; border-bottom: 1px solid var(--line); }
+.test-log th {
+  font-family: var(--display);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: var(--ink-faint);
+}
+.test-log th:last-child, .test-log td:last-child { text-align: left; }

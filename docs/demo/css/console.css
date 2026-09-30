@@ -1,0 +1,157 @@
+/* Toutes les commandes au même endroit, sous le schéma : session, étape,
+   paramètres, mesures, puis pas sur toute la largeur. Chaque bloc a une
+   largeur fixe et chaque libellé est constant ; seuls les nombres changent, en
+   chasse fixe, sans rien pousser. */
+
+.console {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    'pli step params read'
+    'loop loop loop loop';
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
+.console-step { grid-area: step; border-bottom: 1px solid var(--line); }
+.console-pli { grid-area: pli; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.console-loop { grid-area: loop; flex-wrap: wrap; }
+
+.console #params { grid-area: params; }
+.console #readout { grid-area: read; }
+.console .readout { border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
+.step-controls {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.console-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1.25rem;
+}
+
+/* Puce hexagonale en dégradé devant chaque libellé, comprise dans sa largeur. */
+.console-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: none;
+  width: 6.5rem;
+  font-family: var(--display);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.console-label::before {
+  content: '';
+  flex: none;
+  width: 0.6rem;
+  height: 0.55rem;
+  background: var(--candy);
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+
+.console .button { min-height: 2.4rem; }
+.console #prev, .console #next { width: 6.5rem; }
+.console-step .console-label, .console-pli .console-label { width: auto; }
+.console #exit { width: 9.5rem; flex: none; }
+
+/* ---------------------------------------------------------- compteurs */
+
+.console-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  margin: 0;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  white-space: pre;
+}
+.console-count output {
+  min-width: 4ch;
+  font-size: var(--t-xl);
+  font-weight: 600;
+  text-align: right;
+  color: var(--ink);
+}
+.console-pli .console-count output { min-width: 4ch; }
+.console-count .of { min-width: 6ch; font-size: var(--t-sm); color: var(--ink-faint); }
+.console-count .stop { min-width: 20ch; }
+.console-count .stop .warn { color: var(--alert); font-weight: 600; }
+
+.jog { display: flex; gap: 0.3rem; flex: none; }
+.jog .button { width: 2.9rem; padding-inline: 0; font-family: var(--mono); }
+.jog .button:first-child, .jog .button:last-child { width: 4rem; font-family: var(--display); }
+.jog [data-play] { width: 5.5rem; font-family: var(--display); }
+.jog [data-play][aria-pressed='true'] {
+  --frame: var(--candy-lemon);
+  --stroke: 2px;
+  animation: playing 1.4s ease-in-out infinite;
+}
+@keyframes playing {
+  50% { filter: brightness(1.18); }
+}
+
+/* ------------------------------------------------------------ mesures */
+
+.readout {
+  display: flex;
+  gap: 1.4rem;
+  margin: 0;
+  padding: 0.55rem 1.25rem;
+}
+.readout div { display: flex; flex-direction: column; justify-content: center; }
+.readout dt {
+  font-family: var(--display);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: var(--ink-faint);
+}
+.readout dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--t-md);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: pre;
+}
+.readout dd.warn { color: var(--alert); }
+
+.readout dd.param { color: var(--ink-soft); font-weight: 400; }
+
+/* Largeur moyenne : session et étape, paramètres et mesures dessous, puis
+   le pas. Seuil : largeur minimale des quatre blocs de la première ligne,
+   mesurée à 1 500 px. */
+@media (max-width: 93.99rem) {
+  .console {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'pli step'
+      'params read'
+      'loop loop';
+  }
+  .console #params { border-left: 0; }
+}
+
+/* Écran étroit : les blocs s'empilent, chacun sur toute la largeur. */
+@media (max-width: 47.99rem) {
+  .console {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'pli' 'step' 'params' 'read' 'loop';
+  }
+  .console .readout { border-left: 0; }
+  .console-pli { border-right: 0; flex-wrap: wrap; }
+  .console-step, .jog { flex-wrap: wrap; }
+  .jog { flex: 1 1 100%; }
+  .step-controls { justify-content: flex-start; }
+  .console-label { width: 100%; }
+  .console #prev, .console #next { width: auto; }
+}

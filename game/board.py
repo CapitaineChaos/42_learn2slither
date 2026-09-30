@@ -42,6 +42,7 @@ class Board:
         self.hunger = 0
         self.longest = len(self.snake.body)
         self.over = False
+        self.starved = False
 
     def step(self, order: Direction | None = None) -> Event:
         if order is None or not self.accepts(order):
@@ -65,7 +66,10 @@ class Board:
         self.moves += 1
         self.hunger += 1
         event = self.eat()
-        if event is Event.DEAD or self.trapped() or self.starving():
+        if event is Event.DEAD or self.trapped():
+            return self.die()
+        if self.starving():
+            self.starved = True
             return self.die()
         return event
 

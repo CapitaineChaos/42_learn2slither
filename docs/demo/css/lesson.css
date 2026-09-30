@@ -1,0 +1,174 @@
+/* Colonne de cours, réservée à la lecture : position dans le parcours, titre,
+   formule, idée de l'étape, fiche, tableau de calcul, En savoir plus. Les commandes sont
+   toutes dans la console, sous le schéma. */
+
+.lesson {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lesson-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1.4rem 2rem 1.75rem;
+  container-type: inline-size;
+}
+
+/* Quand la colonne est assez large, le calcul passe à droite du texte, et le
+   tableau reste visible pendant la lecture de l'explication. */
+@container (min-width: 60rem) {
+  .lesson-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 32rem) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'text calc'
+      'more calc';
+    column-gap: 2.25rem;
+    align-items: start;
+  }
+  .lesson-text { grid-area: text; }
+  .lesson-calc { grid-area: calc; }
+  .lesson-grid .more { grid-area: more; }
+  .lesson-calc #calc > :first-child { margin-top: 0; }
+}
+
+.where {
+  display: flex;
+  gap: 0.75rem;
+  white-space: nowrap;
+  margin: 0 0 0.4rem;
+  font-family: var(--display);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.where-phase { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--ink-faint); }
+.where-phase.phase-boucle { color: var(--accent-text); }
+.where-node { flex: none; color: var(--ink-soft); }
+
+.lesson h2 {
+  max-width: 30ch;
+  margin: 0 0 1rem;
+  font-size: var(--t-2xl);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.lesson h2::before {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 3px;
+  margin-bottom: 0.6rem;
+  background: var(--candy);
+}
+
+/* Le cadre a une hauteur fixe, de sorte qu'une formule plus haute que la
+   précédente ne pousse pas ce qui suit. */
+.formula {
+  display: flex;
+  align-items: center;
+  justify-content: safe center;
+  min-height: 5.5rem;
+  max-width: 62ch;
+  margin: 0 0 1.1rem;
+  padding: 0.6rem 1rem;
+  color: var(--ink);
+  background: var(--sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  corner-shape: bevel;
+  overflow: auto hidden;
+}
+.formula:empty { display: none; }
+
+.intro { margin: 0 0 1.1rem; color: var(--ink); }
+.intro:empty { display: none; }
+.formula .katex-display { margin: 0; }
+
+.prose {
+  max-width: 62ch;
+  font-size: var(--t-lg);
+  line-height: 1.65;
+}
+.prose p { margin: 0 0 0.8rem; }
+.prose p:last-child { margin-bottom: 0; }
+.prose b, .prose strong { font-weight: 600; color: var(--ink); }
+.prose code { color: var(--ink-soft); }
+
+.prose .now {
+  display: block;
+  margin: 0.9rem 0;
+  padding: 0.6rem 0.85rem;
+  background: var(--accent-soft);
+  border-left: 3px solid;
+  border-image: var(--fill-hot) 1;
+  font-size: var(--t-sm);
+}
+.prose .now b { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ------------------------------------------------------------------- fiche */
+
+/* Texte principal en fiche : intitulé à gauche, contenu à droite. La ligne de
+   l'itération courante porte l'accent du parcours. */
+.spec {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 0.7rem 1rem;
+  margin: 0;
+  font-size: var(--t-md);
+  line-height: 1.55;
+}
+.spec dt {
+  padding-top: 0.2rem;
+  font-family: var(--display);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.spec dd { margin: 0; color: var(--ink-soft); }
+.spec dt.is-now { color: var(--accent-text); }
+.spec dt.is-now + dd {
+  padding: 0.35rem 0.6rem;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+  corner-shape: bevel;
+}
+
+@container (max-width: 30rem) {
+  .spec { grid-template-columns: 1fr; gap: 0.1rem; }
+  .spec dd { margin-bottom: 0.5rem; }
+}
+
+/* ---------------------------------------------------------- en savoir plus */
+
+.more {
+  max-width: 62ch;
+  margin: 1.75rem 0 0;
+  border-top: 1px solid var(--line);
+}
+.more-title {
+  padding: 0.9rem 0 0.5rem;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.more .prose { padding-top: 0.4rem; font-size: var(--t-md); line-height: 1.6; color: var(--ink-soft); }
+.more h4 { margin: 1.2rem 0 0.35rem; font-family: var(--display); font-size: var(--t-sm); font-weight: 600; color: var(--ink); }
+.more h4:first-child { margin-top: 0; }
+.more .katex-display { margin: 0.7rem 0; overflow: auto hidden; }
+
+@media (max-width: 63.99rem), (max-height: 41.99rem) {
+  .lesson-scroll { padding: 1rem 1rem 1.25rem; }
+}

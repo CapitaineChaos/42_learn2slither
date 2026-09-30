@@ -1,0 +1,160 @@
+/* Éléments, commandes et utilitaires partagés. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 100%; }
+
+/* Motif Hero Patterns « Hexagons », https://heropatterns.com (CC BY 4.0).
+   Employé en masque : la teinte vient d'un jeton, le motif n'en porte aucune. */
+:root {
+  --honeycomb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/svg%3E");
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: var(--t-md);
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--edge) transparent;
+}
+
+::selection { background: var(--accent-soft); color: var(--ink); }
+
+h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 600; }
+
+/* Anneau de 3 px, décollé de 2 px, visible sur les panneaux comme sur les
+   boutons pleins. */
+:where(a, button, select, summary, input, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.skip {
+  position: absolute;
+  left: 0.5rem;
+  top: -3rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  background: var(--bar);
+  color: var(--on-bar);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.skip:focus { top: 0.5rem; }
+
+/* ------------------------------------------------------- champs et curseurs */
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.25rem;
+  padding: 0 0.3rem;
+  font-size: var(--t-sm);
+  cursor: pointer;
+}
+.check input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+input[type="range"] {
+  appearance: none;
+  width: 100%;
+  height: 1.5rem;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: var(--candy);
+  border: 0;
+  border-radius: 2px;
+}
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  background: var(--candy);
+  border: 0;
+  border-radius: 2px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.2rem;
+  height: 1.1rem;
+  margin-top: -0.45rem;
+  background: var(--fill-hot);
+  border: 0;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 1.2rem;
+  height: 1.1rem;
+  background: var(--fill-hot);
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+
+code { font-family: var(--mono); font-size: 0.9em; }
+
+/* ------------------------------------------------------ rappel des symboles */
+
+/* Un symbole souligné en pointillé porte sa définition, affichée au survol et
+   au focus clavier dans une bulle unique (views/tooltip.js). La bulle est en
+   position fixe, donc ni le cadre défilant du tableau ni le bord de la fenêtre
+   ne la coupent. */
+.sym {
+  position: relative;
+  text-decoration: underline dotted var(--edge);
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.sym:hover, .sym:focus-visible { color: var(--accent-text); }
+
+.tip {
+  position: fixed;
+  z-index: 70;
+  max-width: min(20rem, calc(100vw - 16px));
+  padding: 0.4rem 0.65rem;
+  font-family: var(--body);
+  font-size: var(--t-xs);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.45;
+  text-align: left;
+  text-transform: none;
+  white-space: normal;
+  color: var(--on-bar);
+  background: var(--bar);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+  pointer-events: none;
+}
+.tip[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

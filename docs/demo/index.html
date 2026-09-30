@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apprentissage par renforcement</title>
+
+<script>
+  (() => {
+    let theme = null;
+    try { theme = localStorage.getItem('theme'); } catch (error) {}
+    if (theme !== 'light' && theme !== 'dark') {
+      theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/controls.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/flow.css">
+<link rel="stylesheet" href="css/console.css">
+<link rel="stylesheet" href="css/frise.css">
+<link rel="stylesheet" href="css/lesson.css">
+<link rel="stylesheet" href="css/calc.css">
+<link rel="stylesheet" href="css/figures.css">
+<link rel="stylesheet" href="css/wiki.css">
+<link rel="stylesheet" href="css/test.css">
+<link rel="stylesheet" href="css/start.css">
+
+<script defer src="vendor/katex/katex.min.js"></script>
+<script defer src="vendor/katex/auto-render.min.js"></script>
+</head>
+<body class="booting">
+
+<!-- Icônes Lucide, https://lucide.dev (ISC) -->
+<svg class="sprite" aria-hidden="true">
+  <defs>
+    <linearGradient id="logo-line" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" style="stop-color: var(--candy-pink)"/>
+      <stop offset="0.5" style="stop-color: var(--accent)"/>
+      <stop offset="1" style="stop-color: var(--candy-sky)"/>
+    </linearGradient>
+  </defs>
+  <symbol id="logo" viewBox="0 0 48 48">
+    <path d="M24 3 42.2 13.5v21L24 45 5.8 34.5v-21Z" style="fill: var(--surface); stroke: url(#logo-line); stroke-width: 2.5; stroke-linejoin: round"/>
+    <path d="M24 9.5 36.6 16.8v14.4L24 38.5 11.4 31.2V16.8Z" style="fill: none; stroke: var(--line); stroke-width: 1"/>
+    <path d="M12 31.5c6 0 7.6-1 9.6-5.2s3.4-8.6 8.6-9.4c2.2-.3 4-.4 5.8-.4" style="fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round"/>
+    <circle cx="23.2" cy="23.6" r="2.4" style="fill: var(--candy-lemon); stroke: var(--ink); stroke-width: 1"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-17.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+</svg>
+
+<div class="start" id="loader">
+  <div class="start-card">
+    <span class="start-logo">
+      <svg class="start-ring" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 3 90.7 26.5v47L50 97 9.3 73.5v-47Z"/></svg>
+      <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+    </span>
+
+    <div class="gauge" id="loader-bar" role="progressbar" aria-label="Entraînement"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="gauge-track"><div class="gauge-fill" id="loader-fill"></div></div>
+      <p class="gauge-line"><span class="gauge-stage" id="loader-stage"></span><span class="gauge-percent" id="loader-percent">0 %</span></p>
+    </div>
+
+    <form class="config" id="config">
+      <h2 class="config-title">Configuration</h2>
+      <div class="options" id="options"></div>
+      <button type="submit" class="button strong start-go" id="start" disabled>Démarrer</button>
+    </form>
+  </div>
+</div>
+
+<a class="skip" href="#lesson">Contenu</a>
+
+<div class="app" id="app">
+
+  <h1 class="visually-hidden">Apprentissage par renforcement</h1>
+
+  <nav class="flow" aria-label="Parcours">
+    <div class="flow-panel">
+      <div class="flow-map" id="flow"></div>
+      <div class="panel-tools">
+        <button type="button" class="tool" id="toggle-flow" aria-label="Parcours" aria-expanded="true" aria-controls="flow">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
+        </button>
+        <button type="button" class="tool" id="theme" aria-label="Thème sombre" aria-pressed="false">
+          <svg class="tool-icon moon" aria-hidden="true"><use href="#icon-moon"/></svg>
+          <svg class="tool-icon sun" aria-hidden="true"><use href="#icon-sun"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="console">
+
+      <section class="console-group console-pli" aria-labelledby="console-pli">
+        <h2 class="console-label" id="console-pli">session</h2>
+        <p class="console-count"><output id="session-number" for="session">1</output></p>
+        <div class="track session-track">
+          <canvas class="session-lengths" id="session-lengths" aria-hidden="true"></canvas>
+          <label class="visually-hidden" for="session">Session</label>
+          <input type="range" id="session" min="1" max="1000" step="1" value="1">
+        </div>
+        <button type="button" class="button" id="test-open">Tester</button>
+      </section>
+
+      <section class="console-group console-step" aria-labelledby="console-step">
+        <h2 class="console-label" id="console-step">étape</h2>
+        <div class="step-controls">
+          <button type="button" class="button" id="prev">Précédent</button>
+          <p class="console-count"><output id="step-count">1</output><span class="of">/ <span id="step-max">0</span></span></p>
+          <button type="button" class="button strong" id="next">Suivant</button>
+        </div>
+      </section>
+
+      <dl class="readout console-params" id="params"></dl>
+
+      <section class="console-group console-loop" aria-labelledby="console-loop">
+        <h2 class="console-label" id="console-loop">pas</h2>
+        <p class="console-count"><output id="iteration" for="iter">1</output><span class="of stop">sur <span id="iteration-max">1</span> · <span id="stop-kind"></span></span></p>
+        <div class="jog" id="jog"></div>
+        <div class="track">
+          <div class="frise" id="frise" aria-hidden="true"></div>
+          <label class="visually-hidden" for="iter">Pas</label>
+          <input type="range" id="iter" min="0" max="100" step="1" value="0">
+        </div>
+        <button type="button" class="button" id="exit">Aller à la fin</button>
+      </section>
+
+      <dl class="readout" id="readout"></dl>
+
+    </div>
+  </nav>
+
+  <main class="lesson" id="lesson" tabindex="-1">
+    <div class="lesson-scroll">
+      <div class="lesson-grid">
+        <div class="lesson-text">
+          <p class="where" id="where"></p>
+          <h2 id="title"></h2>
+          <div class="formula" id="formula"></div>
+          <div class="prose intro" id="intro"></div>
+          <div class="prose" id="lead"></div>
+        </div>
+        <div class="lesson-calc">
+          <div id="calc"></div>
+        </div>
+        <section class="more" id="more-box" aria-labelledby="more-title">
+          <h3 class="more-title" id="more-title">En savoir plus</h3>
+          <div class="prose" id="more"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <aside class="figure-column" id="figures" aria-label="Figures">
+    <div class="panel-tools">
+      <button type="button" class="tool tool-side" id="toggle-plots" aria-label="Figures" aria-expanded="true" aria-controls="plots">
+        <svg class="tool-icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
+      </button>
+    </div>
+    <div class="plots" id="plots">
+
+      <section class="plot" data-plot="plateau" role="button" tabindex="0"
+               aria-label="Agrandir la figure Plateau">
+        <h2 class="plot-name">Plateau</h2>
+        <div class="plot-body"><canvas data-canvas="plateau" role="img"></canvas></div>
+      </section>
+
+      <section class="plot" data-plot="vision" role="button" tabindex="0"
+               aria-label="Agrandir la figure Vision">
+        <h2 class="plot-name">Vision</h2>
+        <div class="plot-body"><canvas data-canvas="vision" role="img"></canvas></div>
+      </section>
+
+      <section class="plot" data-plot="valeurs" role="button" tabindex="0"
+               aria-label="Agrandir la figure Valeurs Q">
+        <h2 class="plot-name">Valeurs Q</h2>
+        <div class="plot-body"><canvas data-canvas="valeurs" role="img"></canvas></div>
+      </section>
+
+      <section class="plot" data-plot="politique" role="button" tabindex="0"
+               aria-label="Agrandir la figure Politique">
+        <h2 class="plot-name">Politique <span class="plot-note" data-note="politique"></span></h2>
+        <div class="plot-body"><canvas data-canvas="politique" role="img"></canvas></div>
+      </section>
+
+      <section class="plot" data-plot="longueur" role="button" tabindex="0"
+               aria-label="Agrandir la figure Longueur par session">
+        <h2 class="plot-name">Longueur par session</h2>
+        <div class="plot-body"><canvas data-canvas="longueur" role="img"></canvas></div>
+      </section>
+
+      <section class="plot" data-plot="exploration" role="button" tabindex="0"
+               aria-label="Agrandir la figure Exploration ε">
+        <h2 class="plot-name">Exploration ε</h2>
+        <div class="plot-body"><canvas data-canvas="exploration" role="img"></canvas></div>
+      </section>
+
+      <section class="plot" data-plot="evaluation" role="button" tabindex="0"
+               aria-label="Agrandir la figure Évaluation">
+        <h2 class="plot-name">Évaluation</h2>
+        <div class="plot-body"><canvas data-canvas="evaluation" role="img"></canvas></div>
+      </section>
+
+      <button type="button" class="button plots-close" id="plots-close" hidden>Fermer</button>
+    </div>
+
+    <section class="wiki" id="wiki" aria-labelledby="wiki-title" hidden>
+      <div class="wiki-head">
+        <h2 class="wiki-title" id="wiki-title" tabindex="-1"></h2>
+        <button type="button" class="button" id="wiki-back" hidden>Retour</button>
+        <button type="button" class="button" id="wiki-close">Fermer</button>
+      </div>
+      <div class="prose wiki-body" id="wiki-body"></div>
+    </section>
+
+    <section class="test" id="test" aria-labelledby="test-title" hidden>
+      <div class="wiki-head">
+        <h2 class="wiki-title" id="test-title" tabindex="-1">Test</h2>
+        <button type="button" class="button" id="test-close">Fermer</button>
+      </div>
+      <div class="test-card">
+        <div class="test-setting">
+          <label class="test-label" for="test-level">entraînement</label>
+          <output class="test-value" id="test-sessions" for="test-level"></output>
+          <input type="range" id="test-level" min="0" max="1000" step="1" value="1000">
+        </div>
+        <div class="test-board"><canvas id="test-canvas" role="img"></canvas></div>
+        <div class="test-controls">
+          <button type="button" class="button strong" id="test-play" aria-pressed="false">Lecture</button>
+          <button type="button" class="button" id="test-step">+1</button>
+          <button type="button" class="button" id="test-new">Nouvelle partie</button>
+        </div>
+        <div class="test-setting">
+          <label class="test-label" for="test-speed">vitesse</label>
+          <output class="test-value" id="test-pace" for="test-speed"></output>
+          <input type="range" id="test-speed" min="1" max="60" step="1" value="12">
+        </div>
+        <dl class="readout test-readout" id="test-readout"></dl>
+      </div>
+      <table class="test-log" id="test-log" hidden>
+        <caption>parties</caption>
+        <thead><tr><th scope="col">sessions</th><th scope="col">longueur</th><th scope="col">pas</th><th scope="col">fin</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </aside>
+
+  <div class="scrim" id="scrim" hidden></div>
+
+  <p class="visually-hidden" id="live" role="status" aria-live="polite"></p>
+
+</div>
+
+<script type="module" src="src/boot.js"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+/* Palette et échelle typographique.
+
+   Couleurs tirées des échelles Radix Colors (https://www.radix-ui.com/colors) :
+   gris mauve pour les fonds et le texte, violet pour l'accent, red, amber et
+   grass pour les pommes, lime pour le serpent, cyan pour les erreurs. En clair, les pas 11 sont
+   assombris juste assez pour tenir les seuils ci-dessous ; en sombre, ils sont
+   pris tels quels.
+
+   Un seul accent, violet, réservé au parcours : étape courante, boucle active,
+   commandes d'itération. Le texte de l'interface tient le seuil AAA de 7:1 sur
+   son fond, sauf l'étiquette d'un bouton plein (4,5:1) ; les couleurs de
+   données 4,5:1, les traits de figure 3:1. Aucune couleur n'est écrite
+   ailleurs, car une valeur écrite en dur dans un autre fichier échapperait à
+   scripts/verifie_contraste.py, qui contrôle les deux thèmes.
+
+   Pommes rouge et verte, serpent en vert lime, comme dans le jeu. Les erreurs de classement sont en cyan, seule teinte
+   libre une fois le rouge, le jaune, le vert et le violet pris.
+
+   Rose, bleu ciel et citron (--candy-*) ne servent qu'au décor : traits fins,
+   dégradés, logo. Ils ne portent aucune information et ne touchent pas les
+   figures. Les boutons pleins passent du violet au magenta (--hot).
+
+   Space Grotesk pour les titres, libellés et boutons, IBM Plex Sans pour le
+   texte, JetBrains Mono pour les nombres, qui porte aussi le grec et les
+   symboles mathématiques. Fichiers et licences OFL dans vendor/. */
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-weight: 300 700;
+  font-display: block;
+  src: url('../vendor/space-grotesk.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-weight: 400;
+  font-display: block;
+  src: url('../vendor/plex-sans-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-weight: 600;
+  font-display: block;
+  src: url('../vendor/plex-sans-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 400;
+  font-display: block;
+  src: url('../vendor/jetbrains-mono-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 600;
+  font-display: block;
+  src: url('../vendor/jetbrains-mono-600.woff2') format('woff2');
+}
+
+:root {
+  color-scheme: light;
+
+  --ground: #F2EFF3;
+  --surface: #FFFFFF;
+  --sunk: #FAF9FB;
+  --raised: #F2EFF3;
+  --bar: #211F26;
+  --on-bar: #FFFFFF;
+
+  --ink: #211F26;
+  --ink-soft: #3C3A43;
+  --ink-faint: #504E56;
+
+  --line: #DBD8E0;
+  --edge: #8A8896;
+  --grid: #EAE7EC;
+
+  --snake: #5C7C2F;
+  --snake-head: #263209;
+  --apple-green: #297C3A;
+  --apple-red: #CE2C31;
+  --wall: #211F26;
+  --alert: #0F7791;
+  --trace: #211F26;
+
+  --accent: #6E56CF;
+  --on-accent: #FFFFFF;
+  --accent-text: #5340A0;
+  --accent-soft: #F4F0FE;
+  --accent-line: #C2B5F5;
+  --accent-glow: #6E56CF40;
+  --hot: #B8328A;
+
+  --candy-pink: #F0468F;
+  --candy-sky: #16AEDB;
+  --candy-lemon: #FFD23F;
+  --candy: linear-gradient(90deg, var(--candy-pink), var(--accent) 50%, var(--candy-sky));
+  --fill-hot: linear-gradient(100deg, var(--accent), var(--hot));
+
+  --shadow: 0 1px 2px #211F260F, 0 4px 14px #211F260D;
+  --shadow-lift: 0 12px 40px #211F2633;
+  --scrim: #211F2673;
+
+  --body: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --display: 'Space Grotesk', var(--body);
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --t-xs: 0.8125rem;
+  --t-sm: 0.875rem;
+  --t-md: 1rem;
+  --t-lg: 1.0625rem;
+  --t-xl: 1.25rem;
+  --t-2xl: 1.75rem;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+  --cut: 0.55rem;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --ground: #121113;
+  --surface: #1A191B;
+  --sunk: #161517;
+  --raised: #232225;
+  --bar: #EEEEF0;
+  --on-bar: #121113;
+
+  --ink: #EEEEF0;
+  --ink-soft: #CFCDD4;
+  --ink-faint: #B5B2BC;
+
+  --line: #3C393F;
+  --edge: #6F6D78;
+  --grid: #2B292D;
+
+  --snake: #BDE56C;
+  --snake-head: #E3F7BA;
+  --apple-green: #71D083;
+  --apple-red: #FF9592;
+  --wall: #EEEEF0;
+  --alert: #4CCCE6;
+  --trace: #EEEEF0;
+
+  --accent: #6E56CF;
+  --on-accent: #FFFFFF;
+  --accent-text: #BAA7FF;
+  --accent-soft: #291F43;
+  --accent-line: #56468B;
+  --accent-glow: #7D66D966;
+  --hot: #B8328A;
+
+  --candy-pink: #FF6FB1;
+  --candy-sky: #4FD2F5;
+  --candy-lemon: #FFD84D;
+
+  --shadow: 0 1px 2px #00000066;
+  --shadow-lift: 0 16px 48px #000000AA;
+  --scrim: #000000A6;
+}

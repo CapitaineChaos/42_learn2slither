@@ -1,0 +1,124 @@
+/* Colonne des figures et agrandissement.
+
+   Une figure de tête sur toute la largeur, les six autres en miniatures sur
+   deux colonnes, dans l'ordre du registre. La figure de tête ne change que sur
+   un clic ; la miniature que l'étape commente porte le liseré de l'accent.
+   Agrandie, la figure de tête s'ouvre en superposition au centre de la page,
+   sur un voile.
+
+   Chaque cadre de tracé garde le rapport 4:3. Sans ce rapport, la hauteur
+   disponible étirerait le plan des poids et la projection de la nappe, et les
+   distances lues sur ces deux figures seraient fausses. */
+
+.figure-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.plots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 0.9rem;
+}
+
+.plot {
+  display: grid;
+  grid-template-rows: auto auto;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  corner-shape: bevel;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.plot:hover { border-color: var(--candy-pink); }
+.plot:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.plot.head {
+  grid-column: 1 / -1;
+  order: -1;
+  cursor: zoom-in;
+}
+.plot.head .plot-name { font-size: var(--t-sm); color: var(--ink); }
+
+.plot.spot { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow); }
+
+.plot-name {
+  padding: 0.4rem 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--display);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+}
+.plot.spot .plot-name { color: var(--accent-text); border-image: var(--candy) 1; }
+
+.plot-note {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+}
+
+.plot-body {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  padding: 3px;
+}
+.plot canvas { display: block; width: 100%; height: 100%; }
+
+/* La scène Plotly est hors du flux. Sinon, la taille qu'elle s'applique
+   modifie celle du cadre, qui la redimensionne à son tour, sans fin. */
+.plot-scene {
+  position: absolute;
+  inset: 3px;
+}
+
+/* En miniature, la scène est couverte par un calque transparent, pour que le
+   geste agrandisse la carte au lieu de tourner le relief. Un tracé figé aurait
+   le même effet, mais il empêcherait la scène WebGL de se construire. */
+.plots:not(.zoomed) .plot-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/* ------------------------------------------------------------ agrandissement */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--scrim);
+}
+.scrim[hidden] { display: none; }
+
+.plots.zoomed .plot.active {
+  position: fixed;
+  z-index: 50;
+  top: 50%;
+  left: 50%;
+  width: min(94vw, calc((90vh - 2.5rem) * 4 / 3));
+  transform: translate(-50%, -50%);
+  cursor: default;
+  border-color: var(--line);
+  box-shadow: var(--shadow-lift);
+}
+.plots.zoomed .plot.active .plot-name { font-size: var(--t-sm); padding: 0.5rem 0.9rem; }
+.plots.zoomed .plot.active .plot-scene { touch-action: none; }
+
+.plots-close {
+  position: fixed;
+  z-index: 60;
+  top: 1rem;
+  right: 1rem;
+}

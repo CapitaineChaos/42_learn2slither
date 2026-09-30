@@ -50,6 +50,26 @@ class FrozenAgent(unittest.TestCase):
         )
 
 
+class Starvation(unittest.TestCase):
+    def test_starvation_is_learned_as_an_ordinary_step(self):
+        board = board_with(
+            Difficulty.HARD, [Point(5, 5), Point(4, 5), Point(3, 5)],
+            Direction.RIGHT,
+        )
+        board.hunger_limit = 0
+        agent = Agent({"0D00": [0.0, 0.0, 0.0, 5.0]}, sessions=1000)
+        agent.random = random.Random(0)
+        play(board, agent, True)
+        self.assertTrue(board.starved)
+        self.assertGreater(
+            agent.table["0D00"][3],
+            0.0,
+            "mort de faim : le −100 punissait une action que l'état ne "
+            "permet pas de prévoir, et le serpent finissait par tourner "
+            "en rond",
+        )
+
+
 class BlockedMoves(unittest.TestCase):
     def test_easy_turn_based_order_into_wall_does_nothing(self):
         match = match_with(

@@ -1,0 +1,54 @@
+/* Grille de page et panneaux repliables.
+
+   Grand écran : schéma du parcours et console sur toute la largeur, puis le
+   cours et la colonne des figures, chacun avec son propre défilement. En
+   dessous de 78 rem de large ou 40 rem de haut, la page redevient un document
+   qui défile, ce qui garde la mise en page juste à 200 % de zoom.
+
+   Chaque panneau porte son bouton de repli : en haut à droite du schéma, à
+   côté du thème ; en haut de la colonne des figures. Replié, le schéma laisse
+   une bande à ses boutons, la colonne des figures un rail à son bouton, et le
+   cours prend la largeur libérée. */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.panel-tools { display: flex; flex: none; gap: 0.4rem; }
+
+.flow-panel {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+.flow-panel .panel-tools { padding: 0.6rem 0.75rem 0.6rem 0; }
+
+.lesson { background: var(--surface); }
+
+.figure-column {
+  background: var(--ground);
+  border-left: 1px solid var(--line);
+}
+.figure-column .panel-tools { padding: 0.75rem 0.9rem 0; }
+
+.app.no-flow .flow-map, .app.no-plots .plots { display: none; }
+.app.no-plots .figure-column .panel-tools { padding-bottom: 0.75rem; }
+
+@media (min-width: 78rem) and (min-height: 40rem) {
+  .app {
+    display: grid;
+    height: 100vh;
+    grid-template-columns: minmax(0, 1fr) minmax(24rem, 30%);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'flow flow'
+      'lesson figures';
+  }
+  .app.no-plots { grid-template-columns: minmax(0, 1fr) auto; }
+
+  .flow { grid-area: flow; }
+  .lesson { grid-area: lesson; min-height: 0; }
+  .figure-column { grid-area: figures; min-height: 0; }
+}

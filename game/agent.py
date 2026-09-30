@@ -6,7 +6,7 @@ from .interpreter import ACTIONS
 
 ALPHA = 0.1
 GAMMA = 0.9
-EPSILON_DECAY = 0.97
+EPSILON_DECAY = 0.99
 EPSILON_MIN = 0.001
 
 

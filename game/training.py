@@ -17,9 +17,17 @@ def play(board: Board, agent: Agent, learning: bool) -> Event:
     action = agent.act(state, learning)
     event = board.step(interpreter.ACTIONS[action])
     if learning:
-        next_state = None if board.over else interpreter.state(board)
-        agent.learn(state, action, interpreter.reward(event), next_state)
+        learn(board, agent, state, action, event)
     return event
+
+
+def learn(board: Board, agent: Agent, state, action, event: Event) -> None:
+    if board.starved:
+        reward = interpreter.reward(Event.MOVED)
+        agent.learn(state, action, reward, interpreter.state(board))
+        return
+    next_state = None if board.over else interpreter.state(board)
+    agent.learn(state, action, interpreter.reward(event), next_state)
 
 
 class Training:

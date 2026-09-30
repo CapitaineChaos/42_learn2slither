@@ -1,0 +1,75 @@
+/* Boutons, outils des panneaux, logo. */
+
+/* Hexagone étiré : le cadre est le fond du bouton, la face un calque posé
+   --stroke plus à l'intérieur, découpé sur le même polygone. Le découpage
+   rognerait un anneau de focus, donc au focus le cadre s'épaissit à la place. */
+.button, .tool {
+  --frame: var(--line);
+  --face: var(--surface);
+  --stroke: 1px;
+  --hex: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% 50%, calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 50%);
+  position: relative;
+  isolation: isolate;
+  min-height: 2.25rem;
+  padding: 0.35rem calc(var(--cut) + 0.5rem);
+  font: inherit;
+  font-family: var(--display);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--frame);
+  border: 0;
+  clip-path: var(--hex);
+  cursor: pointer;
+  transition: transform 0.06s;
+}
+:is(.button, .tool)::before {
+  content: '';
+  position: absolute;
+  inset: var(--stroke);
+  z-index: -1;
+  background: var(--face);
+  clip-path: var(--hex);
+}
+:is(.button, .tool):hover:not(:disabled) { --frame: var(--candy); --face: var(--sunk); }
+:is(.button, .tool):active:not(:disabled) { transform: translateY(1px); }
+:is(.button, .tool):focus-visible { --frame: var(--accent); --stroke: 2.5px; outline: none; }
+:is(.button, .tool):disabled { color: var(--ink-faint); --face: var(--sunk); opacity: 0.55; cursor: not-allowed; }
+
+.button.strong {
+  --frame: var(--fill-hot);
+  --face: var(--fill-hot);
+  color: var(--on-accent);
+}
+.button.strong:hover:not(:disabled) { --frame: var(--candy-lemon); --face: var(--fill-hot); --stroke: 2px; }
+.button.strong:focus-visible { --frame: var(--ink); }
+
+/* Outils des panneaux : hexagones à icône seule. Le chevron pointe vers où le
+   panneau se replie. */
+.tool {
+  display: inline-grid;
+  place-items: center;
+  width: 2.6rem;
+  padding: 0;
+  color: var(--ink-soft);
+}
+.tool-icon {
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s;
+}
+.tool[aria-expanded='false'] .tool-icon { transform: rotate(180deg); }
+.tool-side .tool-icon { transform: rotate(90deg); }
+.tool-side[aria-expanded='false'] .tool-icon { transform: rotate(-90deg); }
+.tool[aria-expanded='false'] { color: var(--accent-text); --frame: var(--accent-line); --face: var(--accent-soft); }
+
+.tool .sun, [data-theme='dark'] .tool .moon { display: none; }
+[data-theme='dark'] .tool .sun { display: block; }
+
+.logo { flex: none; width: 2rem; height: 2rem; }

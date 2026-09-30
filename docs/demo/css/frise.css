@@ -1,0 +1,71 @@
+/* Frise de la session affichée sous le curseur de pas : la partie jouée
+   teintée, un trait par pomme mangée. Elle est décalée d'une demi-largeur de
+   poignée de chaque côté, pour que le premier et le dernier pas tombent sous
+   le centre de la poignée. */
+.track {
+  position: relative;
+  flex: 1 1 12rem;
+  min-width: 8rem;
+  height: 2.4rem;
+}
+.frise {
+  position: absolute;
+  inset: 0.3rem 3px;
+  overflow: hidden;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.frise-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--accent-soft);
+}
+.mark {
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  width: 2px;
+  margin-left: -1px;
+}
+.mark.green { background: var(--apple-green); }
+.mark.red { background: var(--apple-red); }
+
+/* Choix de la session : une barre par session sous le curseur. */
+.session-track { flex: none; width: 16rem; min-width: 0; }
+.session-lengths {
+  position: absolute;
+  inset: 0.3rem 3px;
+  width: calc(100% - 6px);
+  height: calc(100% - 0.6rem);
+  background: var(--sunk);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+/* Curseur posé sur la frise : piste transparente, poignée en barre fine. */
+.track input[type='range'] {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+.track input[type='range']::-webkit-slider-runnable-track { height: 100%; background: none; border: 0; }
+.track input[type='range']::-moz-range-track { height: 100%; background: none; border: 0; }
+.track input[type='range']::-webkit-slider-thumb {
+  width: 6px;
+  height: 2.2rem;
+  margin-top: 0;
+  border: 0;
+  border-radius: 3px;
+  clip-path: none;
+  box-shadow: 0 0 0 2px var(--surface), 0 0 10px var(--accent-glow);
+}
+.track input[type='range']::-moz-range-thumb {
+  width: 6px;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 3px;
+  clip-path: none;
+  box-shadow: 0 0 0 2px var(--surface), 0 0 10px var(--accent-glow);
+}
+.track input[type='range']:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }

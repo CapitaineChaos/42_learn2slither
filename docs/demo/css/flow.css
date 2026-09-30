@@ -1,0 +1,119 @@
+/* Schéma du parcours.
+
+   Les nœuds à venir restent en filet discret, les nœuds franchis prennent la
+   teinte de l'accent, le nœud courant est plein, en dégradé violet-magenta,
+   cerclé de citron. La flèche qui mène au nœud courant porte un flux qui
+   défile ; la flèche de retour de la boucle en cours reste teintée. */
+
+.flow-panel {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(40rem 12rem at 0% 0%, color-mix(in srgb, var(--candy-pink) 10%, transparent), transparent 70%),
+    radial-gradient(40rem 12rem at 100% 100%, color-mix(in srgb, var(--candy-sky) 10%, transparent), transparent 70%),
+    var(--ground);
+}
+.flow-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--line);
+  -webkit-mask: var(--honeycomb) 0 0 / 28px 49px;
+  mask: var(--honeycomb) 0 0 / 28px 49px;
+  opacity: 0.45;
+}
+
+.flow-map {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0.75rem 0.3rem 1rem;
+  overflow-x: auto;
+}
+
+.flow-svg {
+  display: block;
+  width: 100%;
+  min-width: 56rem;
+  max-height: 14rem;
+  height: auto;
+  font-family: var(--display);
+}
+
+/* ------------------------------------------------------------------ nœuds */
+
+.node { cursor: pointer; outline: none; }
+
+.node-box {
+  fill: var(--surface);
+  stroke: var(--edge);
+  stroke-width: 1.25;
+  transition: fill 0.2s, stroke 0.2s;
+}
+.node-label {
+  fill: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.node-caption {
+  fill: var(--ink-faint);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+.node:hover .node-box { stroke: var(--candy-pink); stroke-width: 1.75; }
+.node:focus-visible .node-box { stroke: var(--accent); stroke-width: 3; }
+
+.node.is-done .node-box { fill: var(--accent-soft); stroke: var(--accent-line); }
+.node.is-done .node-label { fill: var(--ink); }
+
+.stop-a { stop-color: var(--accent); }
+.stop-b { stop-color: var(--hot); }
+
+.node.is-current .node-box {
+  fill: url(#candy);
+  stroke: var(--candy-lemon);
+  stroke-width: 2;
+  filter: drop-shadow(0 4px 10px var(--accent-glow));
+}
+.node.is-current .node-label, .node.is-current .node-caption { fill: var(--on-accent); }
+
+.pip { fill: var(--surface); stroke: var(--edge); stroke-width: 1; }
+.node.is-done .pip { fill: var(--accent-line); stroke: var(--accent-line); }
+.node.is-current .pip { fill: none; stroke: var(--on-accent); }
+.node.is-current .pip.is-current { fill: var(--candy-lemon); stroke: var(--candy-lemon); }
+.pip-hit { fill: transparent; cursor: pointer; }
+
+/* ---------------------------------------------------------------- flèches */
+
+.edge {
+  fill: none;
+  stroke: var(--edge);
+  stroke-width: 1.25;
+}
+.arrow-head.arrow { fill: var(--edge); }
+.arrow-head.arrow-on { fill: var(--hot); }
+
+.edge.is-on {
+  stroke: var(--hot);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  animation: flow 0.9s linear infinite;
+}
+
+@keyframes flow {
+  to { stroke-dashoffset: -11; }
+}
+
+.edge-label {
+  fill: var(--ink-faint);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+
+.edge.is-live { stroke: var(--accent); stroke-opacity: 0.6; }

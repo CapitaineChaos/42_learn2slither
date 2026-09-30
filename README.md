@@ -9,11 +9,11 @@ droite.
 ```sh
 make
 make test
+make demo
 ```
 
-`make SPEED=20` fixe la vitesse initiale. Les sources sont copiées dans
-`/dev/shm/learn2slither` avant l'exécution ; les modèles sont lus et écrits
-dans `models/` du dépôt (`--models`).
+`make SPEED=20` fixe la vitesse initiale. Le jeu tourne dans le venv `.venv`
+du dépôt ; les modèles sont lus et écrits dans `models/` (`--models`).
 
 ## Déroulement
 
@@ -89,12 +89,17 @@ taille du plateau.
 | 0 | autre |
 
 - Récompenses : verte +10, rouge −10, pas −0,1, mort −100.
-- α = 0,1, γ = 0,9, ε = max(0,001, 0,97^sessions).
-- Une session sans pomme verte pendant 2 × largeur × hauteur pas se termine
-  comme une mort, sinon une politique en boucle ne finit jamais.
+- α = 0,1, γ = 0,9, ε = max(0,001, 0,99^sessions).
+- Une session sans pomme verte pendant 2 × largeur × hauteur pas se termine,
+  sinon une politique en boucle ne finit jamais. Cette mort de faim n'est pas
+  pénalisée. La mise à jour la traite comme un pas ordinaire (−0,1), car le
+  serpent ne voit pas le compteur de faim.
 
-Mesures sur 10 x 10, 200 parties figées : longueur moyenne 17 (max 38) après
-1 000 sessions, 24 (max 46) après 10 000.
+Mesures sur 10 x 10, 200 parties figées : longueur moyenne de 20,2 à 22,3 (max
+43) après 1 000 sessions, sur trois entraînements, et 24,7 (max 44) après
+10 000. Avec ε = max(0,001, 0,97^sessions) et une pénalité de −100 pour la
+faim, l'agent finissait par tourner en rond : longueur moyenne 17 après 1 000
+sessions.
 
 ## Structure
 
@@ -119,6 +124,7 @@ Mesures sur 10 x 10, 200 parties figées : longueur moyenne 17 (max 38) après
 - `game/assets/mur_horizontal.svg` et `mur_vertical.svg` : murs
 - `game/assets/coin_*.svg` : coins des murs
 - `tests/test_regressions.py` : non-régression
+- `docs/demo/` : démo interactive du Q-learning dans le navigateur (`make demo`)
 
 Les trois couleurs de peau des SVG sont remappées dans `game/config.py`.
 Les yeux restent en blanc et noir.

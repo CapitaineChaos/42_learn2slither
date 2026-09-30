@@ -1,27 +1,40 @@
-PYTHON := .venv/bin/python
-PROJECT := /dev/shm/learn2slither
+VENV  := .venv
+PY    := $(VENV)/bin/python
+PIP   := $(VENV)/bin/pip
+STAMP := $(VENV)/.installed
 SPEED ?= 5
 
-.PHONY: all setup venv install run test clean
+.PHONY: all setup install run test clean
 
 all: run
 
+$(STAMP): requirements.txt
+	python3 -m venv $(VENV)
+	$(PIP) install --upgrade pip
+	$(PIP) install -r requirements.txt
+	touch $(STAMP)
+
 setup: install
 
-venv:
-	python3 -m venv .venv
+install: $(STAMP)
 
-install: venv
-	$(PYTHON) -m pip install --upgrade pip
-	$(PYTHON) -m pip install -r requirements.txt
+run: $(STAMP)
+	$(PY) main.py --speed $(SPEED)
 
-run: setup
-	mkdir -p $(PROJECT)
-	rsync -a --delete main.py game requirements.txt $(PROJECT)/
-	cd $(PROJECT) && $(CURDIR)/$(PYTHON) main.py --speed $(SPEED) --models $(CURDIR)/models
-
-test: setup
-	$(PYTHON) -m unittest discover -s tests -t .
+test: $(STAMP)
+	$(PY) -m unittest discover -s tests -t .
 
 clean:
-	rm -rf .venv $(PROJECT) __pycache__ game/__pycache__
+	rm -rf $(VENV) __pycache__ game/__pycache__ tests/__pycache__
+
+DEMO_DIR := docs/demo
+PORT ?= 8001
+
+.PHONY: demo contraste
+
+demo:
+	@echo "démo sur http://localhost:$(PORT)/  (Ctrl-C pour arrêter)"
+	@python3 $(DEMO_DIR)/scripts/serveur.py $(PORT)
+
+contraste:
+	python3 $(DEMO_DIR)/scripts/verifie_contraste.py
